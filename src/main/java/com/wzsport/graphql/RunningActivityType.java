@@ -18,7 +18,7 @@ import com.wzsport.mapper.StudentMapper;
 import com.wzsport.model.RunningActivity;
 import com.wzsport.model.RunningActivityDataExample;
 import com.wzsport.model.RunningActivityExample;
-import com.wzsport.model.RunningActivityExample.Criteria;
+import com.wzsport.service.RunningActivityDataAnalysisService;
 import com.wzsport.model.RunningActivityView;
 import com.wzsport.model.RunningActivityViewExample;
 import com.wzsport.model.Student;
@@ -49,6 +49,7 @@ public class RunningActivityType {
 	private static GraphQLObjectType type;
 	private static GraphQLFieldDefinition singleQueryField;
 	private static GraphQLFieldDefinition listQueryField;
+	private static RunningActivityDataAnalysisService runningActivityDataAnalysisService;
 	
 	public static enum Operator {
 		LESS_THAN, GREATER_THAN, EQUAL, BETWEEN
@@ -182,6 +183,31 @@ public class RunningActivityType {
 							.type(Scalars.GraphQLFloat)
 							.build())
 					.field(GraphQLFieldDefinition.newFieldDefinition()
+	                        .name("sportDataValidateRuleId")
+	                        .description("测试规则的id")
+	                        .type(Scalars.GraphQLLong)
+	                        .build())
+					.field(GraphQLFieldDefinition.newFieldDefinition()
+	                        .name("collectionPointAmount")
+	                        .description("采集数据点的数量")
+	                        .type(Scalars.GraphQLInt)
+	                        .build())
+	                .field(GraphQLFieldDefinition.newFieldDefinition()
+	                        .name("conformStepPerSecondAmount")
+	                        .description("符合每秒步数的点数")
+	                        .type(Scalars.GraphQLInt)
+	                        .build())
+	                .field(GraphQLFieldDefinition.newFieldDefinition()
+	                        .name("conformDistancePerStepAmount")
+	                        .description("符合每步步幅的点数")
+	                        .type(Scalars.GraphQLInt)
+	                        .build())
+	                .field(GraphQLFieldDefinition.newFieldDefinition()
+	                        .name("conformSpeedAmount")
+	                        .description("符合速度的点数")
+	                        .type(Scalars.GraphQLInt)
+	                        .build())
+					.field(GraphQLFieldDefinition.newFieldDefinition()
 							.name("runningSport")
 							.description("该活动所属的运动项目")
 							.type(RunningSportType.getType())
@@ -208,6 +234,16 @@ public class RunningActivityType {
 								RunningActivityDataExample example = new RunningActivityDataExample();
 								example.createCriteria().andActivityIdEqualTo(runningActivity.getId());
 			                	return runningActivityDataMapper.selectByExample(example);
+							} )
+							.build())
+					.field(GraphQLFieldDefinition.newFieldDefinition()
+							.name("dataAnalysis")
+							.description("该活动记录的采集数据分析结果")
+							.type(RunningActivityDataAnalysisType.getType())
+							.dataFetcher(environment ->  {
+								RunningActivityView runningActivity = environment.getSource();
+								
+			                	return runningActivityDataAnalysisService.getDataAnalysisByRunningActivityId(runningActivity.getId());
 							} )
 							.build())
 					.build();
@@ -454,4 +490,13 @@ public class RunningActivityType {
     public void setRunningActivityViewMapper(RunningActivityViewMapper runningActivityViewMapper) {
         RunningActivityType.runningActivityViewMapper = runningActivityViewMapper;
     }
+    
+    @Autowired(required = true)
+	public void setRunningActivityDataAnalysisService(
+			RunningActivityDataAnalysisService runningActivityDataAnalysisService) {
+		RunningActivityType.runningActivityDataAnalysisService = runningActivityDataAnalysisService;
+	}
+    
+    
+	
 }
