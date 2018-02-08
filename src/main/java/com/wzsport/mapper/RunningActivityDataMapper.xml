@@ -22,6 +22,20 @@
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
+  
+  <resultMap type="com.wzsport.model.RunningActivityMesWithSportName" id="RunningActivityMesWithSportName">
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="student_no" jdbcType="VARCHAR" property="studentNo" />
+    <result column="is_man" jdbcType="BIT" property="isMan" />
+    <result column="sport_name" jdbcType="VARCHAR" property="sportName" />
+    <result column="distance" jdbcType="SMALLINT" property="distance" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="speed" jdbcType="DECIMAL" property="speed" />
+    <result column="step_per_second" jdbcType="DECIMAL" property="stepPerSecond" />
+    <result column="step_count" jdbcType="SMALLINT" property="stepCount" />
+    <result column="distance_per_step" jdbcType="DECIMAL" property="distancePerStep" />
+    <result column="id" jdbcType="BIGINT" property="id" />
+  </resultMap>
   <sql id="Example_Where_Clause">
     <!--
       WARNING - @mbg.generated

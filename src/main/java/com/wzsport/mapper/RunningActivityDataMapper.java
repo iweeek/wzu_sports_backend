@@ -2,6 +2,8 @@ package com.wzsport.mapper;
 
 import com.wzsport.model.RunningActivityData;
 import com.wzsport.model.RunningActivityDataExample;
+import com.wzsport.model.RunningActivityMesWithSportName;
+
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -103,4 +105,14 @@ public interface RunningActivityDataMapper {
             "is_normal = #{isNormal,jdbcType=BIT},", "created_at = #{createdAt,jdbcType=TIMESTAMP},",
             "updated_at = #{updatedAt,jdbcType=TIMESTAMP}", "where id = #{id,jdbcType=BIGINT}" })
     int updateByPrimaryKey(RunningActivityData record);
+    
+    @Select({  "Select e.name,e.student_no,e.is_man,f.name as sport_name,e.distance,e.cost_time,e.speed,e.step_count,e.step_per_second\n" + 
+            ",e.distance_per_step,e.id from (select d.* from (select a.student_id as student_id from \n" + 
+            "wzsport_running_activity_qualified_count_view a join wzsport_student b on a.student_id = b.id\n" + 
+            "where b.is_man = #{isMan,jdbcType=INTEGER} ORDER BY a.running_activity_qualified_count DESC limit #{number,jdbcType=INTEGER}) c join wzsport_running_activity_view d on c.student_id = d.student_id \n" + 
+            "where 1 = 1 and qualified = 1 and is_valid = 1 ORDER BY d.student_id) e left join wzsport_running_sport f \n" + 
+            "on e.running_sport_id = f.id" })
+    @ResultMap("com.wzsport.mapper.RunningActivityDataMapper.RunningActivityMesWithSportName")		
+    List<RunningActivityMesWithSportName> selectByIsManAndNumber(@Param("isMan") int isMan,@Param("number") int number);
+    
 }
